@@ -1,36 +1,27 @@
+from random import randint
 
-import requests
-from bs4 import BeautifulSoup
-from telegram import Bot, InputFile
+def generate_match_results(num_matches):
+    # Генерация случайных результатов матчей
+    results = [randint(0, 5) for _ in range(num_matches)]
+    return results
 
-# Укажите токен вашего бота
-TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
-bot = Bot(token=TOKEN)
-
-# URL для вытягивания изображения
-target_url = 'YOUR_TARGET_WEBSITE_URL'
-
-def get_image_url():
-    response = requests.get(target_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    # Используйте соответствующие селекторы для вашего сайта
-    image_element = soup.select_one('YOUR_IMAGE_SELECTOR')
-    if image_element and 'src' in image_element.attrs:
-        return image_element['src']
-    return None
-
-def send_image_to_channel(image_url, channel_id):
-    image_data = requests.get(image_url).content
-    bot.send_photo(chat_id=channel_id, photo=InputFile(io.BytesIO(image_data)))
+def calculate_goal_probability(team_results):
+    # Расчет вероятности забитых голов для команды
+    total_goals = sum(team_results)
+    average_goals = total_goals / len(team_results)
+    return average_goals
 
 def main():
-    image_url = get_image_url()
-    if image_url:
-        # Укажите ID вашего телеграм-канала
-        channel_id = '@YOUR_CHANNEL_ID'
-        send_image_to_channel(image_url, channel_id)
-    else:
-        print("Не удалось получить URL изображения.")
+    # Генерация результатов для двух команд
+    team1_results = generate_match_results(30)
+    team2_results = generate_match_results(30)
+
+    # Расчет вероятности забитых голов для каждой команды
+    team1_goal_probability = calculate_goal_probability(team1_results)
+    team2_goal_probability = calculate_goal_probability(team2_results)
+
+    print("Вероятность забитых голов для команды 1:", team1_goal_probability)
+    print("Вероятность забитых голов для команды 2:", team2_goal_probability)
 
 if __name__ == "__main__":
     main()
